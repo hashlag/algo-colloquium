@@ -162,8 +162,6 @@ void mergeSort(int array[], int const begin, int const end)
 }
 ```
 
-## Оценка по времени
-
 ### Оценка по времени
 
 | Best | Avg | Worst |
