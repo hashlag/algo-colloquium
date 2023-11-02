@@ -20,7 +20,7 @@
 
 ## Оценка сложности алгоритма по времени
 
-...
+![оценка по времени](https://raw.githubusercontent.com/hashlag/algo-colloquium/main/time.jpg)
 
 ## Оценка сложности алгоритма по памяти
 
@@ -248,6 +248,10 @@ void quickSort(int arr[], int start, int end)
 }
 ```
 
+### Разбиение Хоара
+
+### Разбиение Ломуто
+
 ### Оценка по времени
 
 | Best | Avg | Worst |
@@ -259,3 +263,303 @@ void quickSort(int arr[], int start, int end)
 | Best | Avg | Worst |
 | --- | --- | --- |
 | O(log n) | O(log n) | O(n) |
+
+
+## Сортировка подсчетом
+
+Алгоритм сортировки целых чисел в диапазоне от 0
+до некоторой константы k
+или сложных объектов, работающий за линейное время.
+
+```c++
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<int> countSort(vector<int>& inputArray)
+{
+
+	int N = inputArray.size();
+
+	// Finding the maximum element of array inputArray[].
+	int M = 0;
+
+	for (int i = 0; i < N; i++)
+		M = max(M, inputArray[i]);
+
+	// Initializing countArray[] with 0
+	vector<int> countArray(M + 1, 0);
+
+	// Mapping each element of inputArray[] as an index
+	// of countArray[] array
+
+	for (int i = 0; i < N; i++)
+		countArray[inputArray[i]]++;
+
+	// Calculating prefix sum at every index
+	// of array countArray[]
+	for (int i = 1; i <= M; i++)
+		countArray[i] += countArray[i - 1];
+
+	// Creating outputArray[] from countArray[] array
+	vector<int> outputArray(N);
+
+	for (int i = N - 1; i >= 0; i--)
+
+	{
+		outputArray[countArray[inputArray[i]] - 1]
+			= inputArray[i];
+
+		countArray[inputArray[i]]--;
+	}
+
+	return outputArray;
+}
+
+// Driver code
+int main()
+
+{
+
+	// Input array
+	vector<int> inputArray = { 4, 3, 12, 1, 5, 5, 3, 9 };
+
+	// Output array
+	vector<int> outputArray = countSort(inputArray);
+
+	for (int i = 0; i < inputArray.size(); i++)
+		cout << outputArray[i] << " ";
+
+	return 0;
+}
+```
+
+### Асимптотическая оценка
+
+![](https://raw.githubusercontent.com/hashlag/algo-colloquium/main/count_compl.png)
+
+## Цифровая сортировка a.k.a. Radix sort
+
+Имеем множество последовательностей одинаковой длины, состоящих из элементов, на которых задано отношение линейного порядка. Требуется отсортировать эти последовательности в лексикографическом порядке.
+
+По аналогии с разрядами чисел будем называть элементы, из которых состоят сортируемые объекты, разрядами. Сам алгоритм состоит в последовательной сортировке объектов какой-либо устойчивой сортировкой по каждому разряду, в порядке от младшего разряда к старшему, после чего последовательности будут расположены в требуемом порядке.
+
+### LSD
+
+Анализ значений разрядов от младших к старшим
+
+```c++
+// C++ implementation of Radix Sort
+
+#include <iostream>
+using namespace std;
+
+// A utility function to get maximum
+// value in arr[]
+int getMax(int arr[], int n)
+{
+	int mx = arr[0];
+	for (int i = 1; i < n; i++)
+		if (arr[i] > mx)
+			mx = arr[i];
+	return mx;
+}
+
+// A function to do counting sort of arr[]
+// according to the digit
+// represented by exp.
+void countSort(int arr[], int n, int exp)
+{
+
+	// Output array
+	int output[n];
+	int i, count[10] = { 0 };
+
+	// Store count of occurrences
+	// in count[]
+	for (i = 0; i < n; i++)
+		count[(arr[i] / exp) % 10]++;
+
+	// Change count[i] so that count[i]
+	// now contains actual position
+	// of this digit in output[]
+	for (i = 1; i < 10; i++)
+		count[i] += count[i - 1];
+
+	// Build the output array
+	for (i = n - 1; i >= 0; i--) {
+		output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+		count[(arr[i] / exp) % 10]--;
+	}
+
+	// Copy the output array to arr[],
+	// so that arr[] now contains sorted
+	// numbers according to current digit
+	for (i = 0; i < n; i++)
+		arr[i] = output[i];
+}
+
+// The main function to that sorts arr[]
+// of size n using Radix Sort
+void radixsort(int arr[], int n)
+{
+
+	// Find the maximum number to
+	// know number of digits
+	int m = getMax(arr, n);
+
+	// Do counting sort for every digit.
+	// Note that instead of passing digit
+	// number, exp is passed. exp is 10^i
+	// where i is current digit number
+	for (int exp = 1; m / exp > 0; exp *= 10)
+		countSort(arr, n, exp);
+}
+
+// A utility function to print an array
+void print(int arr[], int n)
+{
+	for (int i = 0; i < n; i++)
+		cout << arr[i] << " ";
+}
+
+// Driver Code
+int main()
+{
+	int arr[] = { 543, 986, 217, 765, 329 };
+	int n = sizeof(arr) / sizeof(arr[0]);
+
+	// Function Call
+	radixsort(arr, n);
+	print(arr, n);
+	return 0;
+}
+```
+
+### MSD
+
+Анализ значений разрядов от старших к младшим
+
+```c++
+// C++ implementation of MSD Radix Sort
+// of MSD Radix Sort using counting sort()
+#include <iostream>
+#include <math.h>
+#include <unordered_map>
+
+using namespace std;
+
+// A utility function to print an array
+void print(int* arr, int n)
+{
+	for (int i = 0; i < n; i++) {
+		cout << arr[i] << " ";
+	}
+	cout << endl;
+}
+
+// A utility function to get the digit
+// at index d in a integer
+int digit_at(int x, int d)
+{
+	return (int)(x / pow(10, d - 1)) % 10;
+}
+
+// The main function to sort array using
+// MSD Radix Sort recursively
+void MSD_sort(int* arr, int lo, int hi, int d)
+{
+
+	// recursion break condition
+	if (hi <= lo) {
+		return;
+	}
+
+	int count[10 + 2] = { 0 };
+
+	// temp is created to easily swap strings in arr[]
+	unordered_map<int, int> temp;
+
+	// Store occurrences of most significant character
+	// from each integer in count[]
+	for (int i = lo; i <= hi; i++) {
+		int c = digit_at(arr[i], d);
+		count++;
+	}
+
+	// Change count[] so that count[] now contains actual
+	// position of this digits in temp[]
+	for (int r = 0; r < 10 + 1; r++)
+		count[r + 1] += count[r];
+
+	// Build the temp
+	for (int i = lo; i <= hi; i++) {
+		int c = digit_at(arr[i], d);
+		temp[count++] = arr[i];
+	}
+
+	// Copy all integers of temp to arr[], so that arr[] now
+	// contains partially sorted integers
+	for (int i = lo; i <= hi; i++)
+		arr[i] = temp[i - lo];
+
+	// Recursively MSD_sort() on each partially sorted
+	// integers set to sort them by their next digit
+	for (int r = 0; r < 10; r++)
+		MSD_sort(arr, lo + count[r], lo + count[r + 1] - 1,
+				d - 1);
+}
+
+// function find the largest integer
+int getMax(int arr[], int n)
+{
+	int mx = arr[0];
+	for (int i = 1; i < n; i++)
+		if (arr[i] > mx)
+			mx = arr[i];
+	return mx;
+}
+
+// Main function to call MSD_sort
+void radixsort(int* arr, int n)
+{
+	// Find the maximum number to know number of digits
+	int m = getMax(arr, n);
+
+	// get the length of the largest integer
+	int d = floor(log10(abs(m))) + 1;
+
+	// function call
+	MSD_sort(arr, 0, n - 1, d);
+}
+
+// Driver Code
+int main()
+{
+	// Input array
+	int arr[] = { 9330, 9950, 718, 8977, 6790,
+				95, 9807, 741, 8586, 5710 };
+
+	// Size of the array
+	int n = sizeof(arr) / sizeof(arr[0]);
+
+	printf("Unsorted array : ");
+
+	// Print the unsorted array
+	print(arr, n);
+
+	// Function Call
+	radixsort(arr, n);
+
+	printf("Sorted array : ");
+
+	// Print the sorted array
+	print(arr, n);
+
+	return 0;
+}
+```
+
+### Асимптотическая оценка
+
+![](https://raw.githubusercontent.com/hashlag/algo-colloquium/main/radix_compl.png)
+
