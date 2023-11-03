@@ -24,9 +24,15 @@
 
 ![оценка по времени](https://raw.githubusercontent.com/hashlag/algo-colloquium/main/time.jpg)
 
+![](https://raw.githubusercontent.com/hashlag/algo-colloquium/main/types.png)
+
 ## Оценка сложности алгоритма по памяти
 
-...
+![](https://raw.githubusercontent.com/hashlag/algo-colloquium/main/mem.png)
+
+##
+
+![](https://raw.githubusercontent.com/hashlag/algo-colloquium/main/funcs.png)
 
 ## Сортировка вставками
 
