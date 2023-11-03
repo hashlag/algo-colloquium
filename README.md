@@ -30,8 +30,6 @@
 
 ![](https://raw.githubusercontent.com/hashlag/algo-colloquium/main/mem.png)
 
-##
-
 ![](https://raw.githubusercontent.com/hashlag/algo-colloquium/main/funcs.png)
 
 ## Сортировка вставками
